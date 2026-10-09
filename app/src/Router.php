@@ -18,11 +18,14 @@ class Router {
 
         if ($method === 'GET' && $route === 'config') {
             $limits = $this->config['limits'];
+            $stmt = $this->db->query("SELECT title, upload_enabled, gallery_enabled FROM events WHERE id = 1");
+            $event = $stmt->fetch();
+
             Response::json([
-                'upload_enabled' => true,
-                'gallery_enabled' => true,
+                'upload_enabled' => $event ? (bool)$event['upload_enabled'] : true,
+                'gallery_enabled' => $event ? (bool)$event['gallery_enabled'] : true,
                 'max_file_size_mb' => $limits['max_file_size_mb'],
-                'title' => 'Pernikahan Rina & Bima'
+                'title' => $event ? $event['title'] : 'Pernikahan Rina & Bima'
             ]);
         }
 
@@ -79,6 +82,20 @@ class Router {
                 $admin->exportZip();
             }
             
+            if ($method === 'POST' && $route === 'admin/settings') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $admin->updateSettings($input ?: []);
+            }
+
+            if ($method === 'POST' && $route === 'admin/password') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                $admin->changePassword($input['old_password'] ?? '', $input['new_password'] ?? '');
+            }
+
+            if ($method === 'POST' && $route === 'admin/purge') {
+                $admin->purgeExpiredPhotos();
+            }
+
             if ($method === 'POST' && $route === 'admin/photos/bulk') {
                 $input = json_decode(file_get_contents('php://input'), true);
                 if (($input['action'] ?? '') === 'delete') {

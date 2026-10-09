@@ -74,14 +74,46 @@
 
                 <!-- Tab Pengaturan -->
                 <section id="tab-pengaturan" class="tab-content hidden">
-                    <h2>Informasi Acara</h2>
+                    <h2>Pengaturan Acara</h2>
                     <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-width: 500px; margin-top: 15px;">
-                        <p><strong>Nama Acara:</strong> <span id="set-event-title">-</span></p>
-                        <p><strong>Tanggal Acara:</strong> <span id="set-event-date">-</span></p>
-                        <p><strong>Slug URL:</strong> <code id="set-event-slug">-</code></p>
-                        <p><strong>Token Akses Tamu:</strong> <code id="set-event-token">-</code></p>
-                        <p><strong>Status Upload:</strong> <span id="set-upload-status" class="badge">Aktif</span></p>
-                        <p><strong>Status Galeri:</strong> <span id="set-gallery-status" class="badge">Aktif</span></p>
+                        <form id="form-event-settings">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="display:block; margin-bottom:4px; font-weight:600;">Nama Acara</label>
+                                <input type="text" id="input-event-title" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="display:block; margin-bottom:4px; font-weight:600;">Tanggal Acara</label>
+                                <input type="date" id="input-event-date" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" id="check-upload-enabled"> Izinkan Tamu Unggah Foto
+                                </label>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                    <input type="checkbox" id="check-gallery-enabled"> Tampilkan Galeri untuk Tamu
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                            <span id="settings-msg" style="margin-left: 10px; color: green; font-size: 0.9rem;"></span>
+                        </form>
+                    </div>
+
+                    <h2 style="margin-top: 30px;">Ganti Password Admin</h2>
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-width: 500px; margin-top: 15px;">
+                        <form id="form-change-password">
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="display:block; margin-bottom:4px; font-weight:600;">Password Lama</label>
+                                <input type="password" id="input-old-password" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label style="display:block; margin-bottom:4px; font-weight:600;">Password Baru (min. 6 karakter)</label>
+                                <input type="password" id="input-new-password" required minlength="6" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Ubah Password</button>
+                            <span id="password-msg" style="margin-left: 10px; font-size: 0.9rem;"></span>
+                        </form>
                     </div>
                 </section>
 
@@ -101,6 +133,13 @@
                                 📦 Unduh Semua Foto (ZIP)
                             </a>
                         </div>
+                    </div>
+
+                    <h2 style="margin-top: 30px;">Pembersihan Retensi (Purge)</h2>
+                    <p>Hapus foto-foto lama yang usianya sudah melewati masa retensi (90 hari) untuk menghemat ruang penyimpanan hosting.</p>
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-width: 500px; margin-top: 15px;">
+                        <button id="btn-purge-photos" class="btn btn-danger">Bersihkan Foto Kedaluwarsa (>90 Hari)</button>
+                        <p id="purge-msg" style="margin-top: 10px; font-size: 0.9rem; color: #555;"></p>
                     </div>
                 </section>
             </main>

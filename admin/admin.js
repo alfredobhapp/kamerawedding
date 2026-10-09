@@ -14,6 +14,15 @@ const Admin = {
         document.getElementById('btn-select-all').addEventListener('click', this.toggleSelectAll.bind(this));
         document.getElementById('btn-delete-selected').addEventListener('click', this.deleteSelected.bind(this));
         
+        const settingsForm = document.getElementById('form-event-settings');
+        if (settingsForm) settingsForm.addEventListener('submit', this.saveSettings.bind(this));
+
+        const passForm = document.getElementById('form-change-password');
+        if (passForm) passForm.addEventListener('submit', this.changePassword.bind(this));
+
+        const purgeBtn = document.getElementById('btn-purge-photos');
+        if (purgeBtn) purgeBtn.addEventListener('click', this.purgePhotos.bind(this));
+        
         document.querySelectorAll('.admin-nav a').forEach(a => {
             a.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -118,11 +127,11 @@ const Admin = {
             const res = await this.request('../api/admin/settings');
             const event = res.event || {};
             
-            if (document.getElementById('set-event-title')) {
-                document.getElementById('set-event-title').textContent = event.title || '-';
-                document.getElementById('set-event-date').textContent = event.event_date || '-';
-                document.getElementById('set-event-slug').textContent = event.slug || '-';
-                document.getElementById('set-event-token').textContent = event.access_token || '-';
+            if (document.getElementById('input-event-title')) {
+                document.getElementById('input-event-title').value = event.title || '';
+                document.getElementById('input-event-date').value = event.event_date || '';
+                document.getElementById('check-upload-enabled').checked = event.upload_enabled == 1;
+                document.getElementById('check-gallery-enabled').checked = event.gallery_enabled == 1;
             }
 
             // QR Code setup
@@ -138,12 +147,82 @@ const Admin = {
 
             const qrContainer = document.getElementById('qr-container');
             if (qrContainer) {
-                // Generate QR Code image using pure SVG or Google Chart / quickchart fallback without heavy lib
                 const encoded = encodeURIComponent(guestUrl);
                 qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}" alt="QR Code Tamu" width="200" height="200" style="display:block; border-radius: 4px;">`;
             }
         } catch (e) {
             console.error('Failed to load settings/QR', e);
+        }
+    },
+
+    async saveSettings(e) {
+        e.preventDefault();
+        const msgEl = document.getElementById('settings-msg');
+        msgEl.textContent = 'Menyimpan...';
+        msgEl.style.color = '#333';
+
+        const data = {
+            title: document.getElementById('input-event-title').value,
+            event_date: document.getElementById('input-event-date').value,
+            upload_enabled: document.getElementById('check-upload-enabled').checked ? 1 : 0,
+            gallery_enabled: document.getElementById('check-gallery-enabled').checked ? 1 : 0
+        };
+
+        try {
+            await this.request('../api/admin/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            msgEl.textContent = 'Pengaturan berhasil disimpan!';
+            msgEl.style.color = 'green';
+            setTimeout(() => { msgEl.textContent = ''; }, 3000);
+        } catch (err) {
+            msgEl.textContent = 'Gagal menyimpan: ' + err.message;
+            msgEl.style.color = 'red';
+        }
+    },
+
+    async changePassword(e) {
+        e.preventDefault();
+        const msgEl = document.getElementById('password-msg');
+        msgEl.textContent = 'Mengubah password...';
+        msgEl.style.color = '#333';
+
+        const old_password = document.getElementById('input-old-password').value;
+        const new_password = document.getElementById('input-new-password').value;
+
+        try {
+            await this.request('../api/admin/password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ old_password, new_password })
+            });
+            msgEl.textContent = 'Password berhasil diubah!';
+            msgEl.style.color = 'green';
+            document.getElementById('form-change-password').reset();
+            setTimeout(() => { msgEl.textContent = ''; }, 3000);
+        } catch (err) {
+            msgEl.textContent = err.message || 'Gagal mengubah password';
+            msgEl.style.color = 'red';
+        }
+    },
+
+    async purgePhotos() {
+        if (!confirm('Yakin ingin menghapus foto yang usianya lebih dari 90 hari? Tindakan ini tidak dapat dibatalkan.')) return;
+
+        const msgEl = document.getElementById('purge-msg');
+        msgEl.textContent = 'Memproses pembersihan...';
+
+        try {
+            const res = await this.request('../api/admin/purge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            msgEl.textContent = `Pembersihan selesai! Sebanyak ${res.purged_count} foto lama telah dihapus.`;
+            await this.loadData();
+        } catch (err) {
+            msgEl.textContent = 'Gagal melakukan pembersihan: ' + err.message;
         }
     },
 

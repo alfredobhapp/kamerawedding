@@ -69,6 +69,63 @@ class Admin {
         Response::json(['event' => $event ?: []]);
     }
 
+    public function updateSettings($data) {
+        $uploadEnabled = !empty($data['upload_enabled']) ? 1 : 0;
+        $galleryEnabled = !empty($data['gallery_enabled']) ? 1 : 0;
+        $title = !empty($data['title']) ? trim($data['title']) : 'Pernikahan Rina & Bima';
+        $eventDate = !empty($data['event_date']) ? trim($data['event_date']) : date('Y-m-d');
+
+        $stmt = $this->db->prepare("UPDATE events SET title = ?, event_date = ?, upload_enabled = ?, gallery_enabled = ?, updated_at = ? WHERE id = 1");
+        $stmt->execute([$title, $eventDate, $uploadEnabled, $galleryEnabled, date('Y-m-d H:i:s')]);
+
+        Response::json(['success' => true]);
+    }
+
+    public function changePassword($oldPassword, $newPassword) {
+        $adminId = $_SESSION['admin_id'] ?? 1;
+        $stmt = $this->db->prepare("SELECT password_hash FROM admins WHERE id = ?");
+        $stmt->execute([$adminId]);
+        $admin = $stmt->fetch();
+
+        if (!$admin || !password_verify($oldPassword, $admin['password_hash'])) {
+            Response::error('invalid_password', 'Password lama tidak cocok.', 400);
+        }
+
+        if (strlen($newPassword) < 6) {
+            Response::error('short_password', 'Password baru minimal 6 karakter.', 400);
+        }
+
+        $newHash = password_hash($newPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+        $updateStmt = $this->db->prepare("UPDATE admins SET password_hash = ? WHERE id = ?");
+        $updateStmt->execute([$newHash, $adminId]);
+
+        Response::json(['success' => true]);
+    }
+
+    public function purgeExpiredPhotos() {
+        // Hapus foto yang lebih dari 90 hari sesuai PRD retention
+        $stmt = $this->db->query("SELECT id, file_key, ext FROM photos WHERE created_at < DATE_SUB(NOW(), INTERVAL 90 DAY)");
+        $photos = $stmt->fetchAll();
+
+        $count = count($photos);
+        if ($count > 0) {
+            $mediaPath = __DIR__ . '/../../media';
+            $ids = array_column($photos, 'id');
+            $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+
+            $delStmt = $this->db->prepare("DELETE FROM photos WHERE id IN ($placeholders)");
+            $delStmt->execute($ids);
+
+            foreach ($photos as $p) {
+                $sub = substr($p['file_key'], 0, 2);
+                @unlink("$mediaPath/f/$sub/{$p['file_key']}.{$p['ext']}");
+                @unlink("$mediaPath/t/$sub/{$p['file_key']}.{$p['ext']}");
+            }
+        }
+
+        Response::json(['success' => true, 'purged_count' => $count]);
+    }
+
     public function exportZip() {
         if (!class_exists('ZipArchive')) {
             Response::error('zip_unsupported', 'Ekstensi ZipArchive tidak aktif pada server PHP hosting.', 500);
