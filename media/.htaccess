@@ -1,0 +1,12 @@
+Options -Indexes -ExecCGI
+<IfModule mod_php.c>
+  php_flag engine off
+</IfModule>
+<FilesMatch "^(?!.*\.(jpg|gif)$).*$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Cache-Control "public, max-age=31536000, immutable"
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
