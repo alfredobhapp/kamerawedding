@@ -71,6 +71,14 @@ class Router {
                 $admin->getStats();
             }
             
+            if ($method === 'GET' && $route === 'admin/settings') {
+                $admin->getSettings();
+            }
+
+            if ($method === 'GET' && $route === 'admin/export') {
+                $admin->exportZip();
+            }
+            
             if ($method === 'POST' && $route === 'admin/photos/bulk') {
                 $input = json_decode(file_get_contents('php://input'), true);
                 if (($input['action'] ?? '') === 'delete') {

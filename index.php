@@ -1,11 +1,18 @@
 <?php
-// TBD: Placeholder logic for guest token access
 $token = $_GET['k'] ?? null;
 if ($token) {
-    // Validasi token dan set cookie akan diimplementasikan nanti
-    // setcookie('wpr_access', 'dummy_token', time() + 30 * 86400, '/', '', true, true);
-    // header('Location: /');
-    // exit;
+    // Simpan access token ke cookie selama 30 hari
+    setcookie('wpr_access', htmlspecialchars($token), [
+        'expires' => time() + 30 * 86400,
+        'path' => '',
+        'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+    // Redirect bersih tanpa query string k=...
+    $redirectUri = strtok($_SERVER['REQUEST_URI'], '?');
+    header('Location: ' . $redirectUri);
+    exit;
 }
 ?>
 <!DOCTYPE html>

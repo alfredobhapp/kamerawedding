@@ -106,8 +106,44 @@ const Admin = {
             this.photos = photos.items || [];
             this.selectedIds.clear();
             this.renderGallery();
+
+            await this.loadSettings();
         } catch (e) {
             console.error(e);
+        }
+    },
+
+    async loadSettings() {
+        try {
+            const res = await this.request('../api/admin/settings');
+            const event = res.event || {};
+            
+            if (document.getElementById('set-event-title')) {
+                document.getElementById('set-event-title').textContent = event.title || '-';
+                document.getElementById('set-event-date').textContent = event.event_date || '-';
+                document.getElementById('set-event-slug').textContent = event.slug || '-';
+                document.getElementById('set-event-token').textContent = event.access_token || '-';
+            }
+
+            // QR Code setup
+            const origin = window.location.origin;
+            const pathParts = window.location.pathname.split('/');
+            pathParts.pop(); // remove admin or file
+            if (pathParts[pathParts.length - 1] === 'admin') pathParts.pop();
+            const basePath = pathParts.join('/');
+            const guestUrl = `${origin}${basePath}/?k=${event.access_token || ''}`;
+
+            const qrUrlEl = document.getElementById('qr-target-url');
+            if (qrUrlEl) qrUrlEl.textContent = guestUrl;
+
+            const qrContainer = document.getElementById('qr-container');
+            if (qrContainer) {
+                // Generate QR Code image using pure SVG or Google Chart / quickchart fallback without heavy lib
+                const encoded = encodeURIComponent(guestUrl);
+                qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}" alt="QR Code Tamu" width="200" height="200" style="display:block; border-radius: 4px;">`;
+            }
+        } catch (e) {
+            console.error('Failed to load settings/QR', e);
         }
     },
 

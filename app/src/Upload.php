@@ -104,7 +104,7 @@ class Upload {
             
             Response::json([
                 'id' => $photoId,
-                'thumb' => "/media/t/$subFolder/$fileKey.$ext",
+                'thumb' => "media/t/$subFolder/$fileKey.$ext",
                 'delete_token' => bin2hex(random_bytes(16))
             ], 201);
         } catch (Exception $e) {

@@ -44,8 +44,8 @@ class Gallery {
             $fileKey = $r['file_key'];
             return [
                 'id' => $r['id'],
-                'thumb' => "/media/t/$subFolder/$fileKey.$ext",
-                'full' => "/media/f/$subFolder/$fileKey.$ext",
+                'thumb' => "media/t/$subFolder/$fileKey.$ext",
+                'full' => "media/f/$subFolder/$fileKey.$ext",
                 'w' => $r['width'],
                 'h' => $r['height'],
                 'note' => $r['guest_note'],

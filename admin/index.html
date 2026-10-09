@@ -56,28 +56,52 @@
                     <div id="admin-gallery" class="admin-gallery"></div>
                 </section>
 
-                <!-- Tab QR (Stub) -->
+                <!-- Tab QR -->
                 <section id="tab-qr" class="tab-content hidden">
-                    <h2>QR Code untuk Tamu</h2>
-                    <p>Cetak QR Code ini agar tamu bisa mengunggah foto.</p>
-                    <div id="qr-container" style="margin: 20px 0; background: #fff; padding: 20px; display:inline-block; border-radius:8px; border:1px solid #ccc;">
-                        (QR Code akan di-generate menggunakan library JS di fase berikutnya)
+                    <h2>QR Code Akses Tamu</h2>
+                    <p>Tamu cukup scan QR Code ini dengan kamera HP untuk langsung masuk ke halaman upload tanpa aplikasi.</p>
+                    
+                    <div style="margin: 20px 0; background: #fff; padding: 24px; display:inline-block; border-radius:12px; border:1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center;">
+                        <div id="qr-container" style="display: flex; justify-content: center; margin-bottom: 15px;"></div>
+                        <p id="qr-target-url" style="font-size: 0.85rem; color: #666; word-break: break-all; max-width: 260px; margin: 0 auto;"></p>
                     </div>
-                    <div>
-                        <a href="../" target="_blank" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Buka Halaman Tamu</a>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btn-print-qr" class="btn btn-primary" onclick="window.print()">Cetak Kartu Meja (Print)</button>
+                        <a href="../" target="_blank" class="btn btn-secondary" style="text-decoration:none;">Uji Halaman Tamu</a>
                     </div>
                 </section>
 
-                <!-- Tab Pengaturan (Stub) -->
+                <!-- Tab Pengaturan -->
                 <section id="tab-pengaturan" class="tab-content hidden">
-                    <h2>Pengaturan Acara (TBD)</h2>
-                    <p>Bagian ini dapat dikembangkan di fase selanjutnya sesuai PRD V1/V2.</p>
+                    <h2>Informasi Acara</h2>
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-width: 500px; margin-top: 15px;">
+                        <p><strong>Nama Acara:</strong> <span id="set-event-title">-</span></p>
+                        <p><strong>Tanggal Acara:</strong> <span id="set-event-date">-</span></p>
+                        <p><strong>Slug URL:</strong> <code id="set-event-slug">-</code></p>
+                        <p><strong>Token Akses Tamu:</strong> <code id="set-event-token">-</code></p>
+                        <p><strong>Status Upload:</strong> <span id="set-upload-status" class="badge">Aktif</span></p>
+                        <p><strong>Status Galeri:</strong> <span id="set-gallery-status" class="badge">Aktif</span></p>
+                    </div>
                 </section>
 
-                <!-- Tab Ekspor (Stub) -->
+                <!-- Tab Ekspor -->
                 <section id="tab-ekspor" class="tab-content hidden">
-                    <h2>Ekspor & Hapus Data (TBD)</h2>
-                    <p>Logika ekspor ZIP stream dan purging akan dikembangkan di pembaruan selanjutnya.</p>
+                    <h2>Ekspor Semua Foto</h2>
+                    <p>Unduh semua foto asli yang telah diunggah para tamu beserta catatan ucapan ke dalam satu file ZIP.</p>
+                    
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; max-width: 500px; margin-top: 15px;">
+                        <p>File ZIP akan berisi:</p>
+                        <ul style="margin-left: 20px; color: #555; font-size: 0.95rem;">
+                            <li>Semua foto resolusi tinggi asli para tamu.</li>
+                            <li>File <code>ucapan_tamu.txt</code> berisi seluruh ucapan dan doa dari para tamu.</li>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <a id="btn-download-zip" href="../api/admin/export" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+                                📦 Unduh Semua Foto (ZIP)
+                            </a>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
