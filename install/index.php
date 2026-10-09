@@ -30,6 +30,13 @@ try {
         $messages[] = "Data default event berhasil dibuat.";
     }
 
+    // Pastikan folder media/f dan media/t siap
+    $mediaDir = __DIR__ . '/../media';
+    if (!is_dir("$mediaDir/f")) @mkdir("$mediaDir/f", 0777, true);
+    if (!is_dir("$mediaDir/t")) @mkdir("$mediaDir/t", 0777, true);
+    @chmod("$mediaDir/f", 0777);
+    @chmod("$mediaDir/t", 0777);
+
     echo "<h1>Database Siap!</h1>";
     echo "<ul>";
     foreach ($messages as $msg) {

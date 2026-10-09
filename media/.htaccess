@@ -2,7 +2,14 @@ Options -Indexes -ExecCGI
 <IfModule mod_php.c>
   php_flag engine off
 </IfModule>
-<FilesMatch "^(?!.*\.(jpg|gif)$).*$">
+
+# Izinkan akses gambar jpg, jpeg, gif
+<FilesMatch "\.(jpg|jpeg|gif)$">
+  Require all granted
+</FilesMatch>
+
+# Blokir file selain gambar
+<FilesMatch "\.(php|phtml|phar|pl|py|jsp|asp|sh|cgi)$">
   Require all denied
 </FilesMatch>
 <IfModule mod_headers.c>

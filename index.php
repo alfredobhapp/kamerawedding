@@ -70,14 +70,9 @@ if ($token) {
                 <h3>Mengunggah <span id="upload-count">0</span> foto</h3>
                 <button id="btn-close-sheet" class="btn-icon">&times;</button>
             </div>
-            
-            <div class="guest-note-container">
-                <label for="guest-note">Catatan/Ucapan untuk Pengantin (Opsional):</label>
-                <textarea id="guest-note" rows="2" placeholder="Selamat menempuh hidup baru..."></textarea>
-            </div>
 
             <div class="upload-list" id="upload-list" aria-live="polite">
-                <!-- Baris progress akan masuk ke sini -->
+                <!-- Baris preview & catatan per-foto akan masuk ke sini -->
             </div>
         </div>
     </div>

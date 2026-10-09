@@ -2,20 +2,14 @@ const UploadQueue = {
     queue: [],
     activeCount: 0,
     maxConcurrent: 2,
-    guestNote: '',
 
     init() {
         this.listEl = document.getElementById('upload-list');
         this.sheetEl = document.getElementById('upload-sheet');
         this.countEl = document.getElementById('upload-count');
-        this.noteEl = document.getElementById('guest-note');
         
         document.getElementById('btn-close-sheet').addEventListener('click', () => {
             this.sheetEl.classList.add('hidden');
-        });
-
-        this.noteEl.addEventListener('input', (e) => {
-            this.guestNote = e.target.value;
         });
     },
 
@@ -24,9 +18,12 @@ const UploadQueue = {
         this.sheetEl.classList.remove('hidden');
         
         for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             const item = {
                 id: Pipeline.generateUUID(),
-                file: files[i],
+                file: file,
+                previewUrl: URL.createObjectURL(file),
+                note: '',
                 status: 'pending',
                 progress: 0,
                 retries: 0
@@ -54,21 +51,37 @@ const UploadQueue = {
         
         let statusText = '';
         if (item.status === 'pending') statusText = 'Menunggu...';
-        else if (item.status === 'processing') statusText = 'Memproses foto...';
+        else if (item.status === 'processing') statusText = 'Memproses...';
         else if (item.status === 'uploading') statusText = `${item.progress}%`;
         else if (item.status === 'success') statusText = 'Terunggah ✓';
         else if (item.status === 'error') statusText = 'Gagal';
 
+        const index = this.queue.indexOf(item) + 1;
         el.innerHTML = `
-            <div class="upload-item-info">
-                <span class="upload-item-name">Foto ${this.queue.indexOf(item) + 1}</span>
-                <span class="upload-item-status ${item.status}">${statusText}</span>
+            <div class="upload-item-header">
+                <img src="${item.previewUrl}" class="upload-item-thumb" alt="Preview foto">
+                <div class="upload-item-details">
+                    <div class="upload-item-info">
+                        <span class="upload-item-name">Foto ${index}</span>
+                        <span class="upload-item-status ${item.status}">${statusText}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill ${item.status}" style="width: ${item.progress}%"></div>
+                    </div>
+                </div>
             </div>
-            <div class="progress-bar">
-                <div class="progress-fill ${item.status}" style="width: ${item.progress}%"></div>
-            </div>
+            <textarea class="upload-item-note" placeholder="Tulis ucapan/catatan untuk foto ini (opsional)..." rows="1">${item.note || ''}</textarea>
             ${item.status === 'error' ? `<button onclick="UploadQueue.retry('${item.id}')" class="btn-retry">Coba Lagi</button>` : ''}
         `;
+
+        const textarea = el.querySelector('.upload-item-note');
+        textarea.oninput = (e) => {
+            item.note = e.target.value;
+        };
+        // Disable note editing once successfully uploaded
+        if (item.status === 'success') {
+            textarea.disabled = true;
+        }
     },
 
     retry(id) {
@@ -153,7 +166,7 @@ const UploadQueue = {
             fd.append('sha256', processed.sha256);
             fd.append('width', processed.width);
             fd.append('height', processed.height);
-            if (this.guestNote) fd.append('guest_note', this.guestNote);
+            if (item.note) fd.append('guest_note', item.note);
 
             xhr.send(fd);
         });
