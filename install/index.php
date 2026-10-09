@@ -9,23 +9,34 @@ try {
     $sqlFile = $config['db']['driver'] === 'sqlite' ? 'schema_sqlite.sql' : 'schema_mysql.sql';
     $sql = file_get_contents(__DIR__ . '/../app/src/' . $sqlFile);
     
-    // Hanya eksekusi jika database kosong (cek tabel events)
-    try {
-        $check = $db->query("SELECT 1 FROM events LIMIT 1");
-    } catch (Exception $e) {
-        // Tabel tidak ada, eksekusi SQL
-        $db->exec($sql);
-        
-        // Create default admin: admin / admin123
+    $now = date('Y-m-d H:i:s');
+    $messages = [];
+
+    // Cek apakah tabel admins sudah punya user
+    $adminCount = $db->query("SELECT COUNT(*) FROM admins")->fetchColumn();
+    if ($adminCount == 0) {
         $hash = password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]);
-        $now = date('Y-m-d H:i:s');
         $db->exec("INSERT INTO admins (username, password_hash, created_at) VALUES ('admin', '$hash', '$now')");
-        
-        echo "<h1>Instalasi Berhasil</h1>";
-        echo "<p>Tabel telah dibuat. Silakan login dengan Username: <b>admin</b>, Password: <b>admin123</b></p>";
+        $messages[] = "Akun admin default berhasil dibuat: Username: <b>admin</b>, Password: <b>admin123</b>";
+    } else {
+        $messages[] = "Tabel admin sudah memiliki akun terdaftar.";
     }
-    
-    echo "<a href='../admin/'>Ke Dashboard Admin</a>";
+
+    // Cek apakah default event sudah ada
+    $eventCount = $db->query("SELECT COUNT(*) FROM events WHERE id = 1")->fetchColumn();
+    if ($eventCount == 0) {
+        $db->exec("INSERT INTO events (id, slug, title, event_date, access_token, created_at, updated_at) 
+                   VALUES (1, 'rina-bima', 'Pernikahan Rina & Bima', '2026-10-17', 'dummytoken123', '$now', '$now')");
+        $messages[] = "Data default event berhasil dibuat.";
+    }
+
+    echo "<h1>Database Siap!</h1>";
+    echo "<ul>";
+    foreach ($messages as $msg) {
+        echo "<li>$msg</li>";
+    }
+    echo "</ul>";
+    echo "<p><a href='../admin/'>Ke Dashboard Admin</a> | <a href='../'>Ke Beranda Tamu</a></p>";
 } catch (Exception $e) {
     echo "<h1>Gagal Menginstal</h1>";
     echo "<pre>" . $e->getMessage() . "</pre>";
