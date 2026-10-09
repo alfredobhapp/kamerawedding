@@ -17,7 +17,10 @@ class Db {
             $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             return $pdo;
         } catch (PDOException $e) {
-            die(json_encode(['error' => ['code' => 'db_error', 'message' => 'Koneksi database gagal.']]));
+            die(json_encode(['error' => [
+                'code' => 'db_error',
+                'message' => 'Koneksi database gagal: ' . $e->getMessage()
+            ]]));
         }
     }
 }

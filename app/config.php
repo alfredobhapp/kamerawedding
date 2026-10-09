@@ -9,7 +9,7 @@ return [
         'driver' => 'mysql', // ← diubah dari 'sqlite'
         'sqlite_path' => __DIR__ . '/storage/sqlite/wpr.sqlite',
         'mysql' => [
-            'host' => '127.0.0.1', // atau 'localhost'
+            'host' => 'localhost',
             'port' => '3306',
             'database' => 'vinq9912_wpr_db', // ← nama DB cPanel
             'username' => 'vinq9912_admin',  // ← perhatikan prefix!
