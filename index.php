@@ -54,5 +54,28 @@ if ($token) {
             <button id="btn-privacy" class="link-button">Foto terlihat oleh semua tamu. Pelajari</button>
         </footer>
     </main>
+
+    <!-- Upload Progress Bottom Sheet -->
+    <div id="upload-sheet" class="upload-sheet hidden">
+        <div class="upload-sheet-content">
+            <div class="sheet-header">
+                <h3>Mengunggah <span id="upload-count">0</span> foto</h3>
+                <button id="btn-close-sheet" class="btn-icon">&times;</button>
+            </div>
+            
+            <div class="guest-note-container">
+                <label for="guest-note">Catatan/Ucapan untuk Pengantin (Opsional):</label>
+                <textarea id="guest-note" rows="2" placeholder="Selamat menempuh hidup baru..."></textarea>
+            </div>
+
+            <div class="upload-list" id="upload-list" aria-live="polite">
+                <!-- Baris progress akan masuk ke sini -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/assets/js/pipeline.js"></script>
+    <script src="/assets/js/queue.js"></script>
 </body>
 </html>
