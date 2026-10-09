@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Wedding Photo Repository</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Tampilan Login -->
+        <div id="login-view" class="view">
+            <div class="login-box">
+                <h2>Login Admin</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btn-login" style="width: 100%;">Masuk</button>
+                    <p id="login-error" class="error-msg"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tampilan Dashboard -->
+        <div id="dashboard-view" class="view hidden">
+            <header class="admin-header">
+                <h1>Pernikahan Rina & Bima - Admin</h1>
+                <nav class="admin-nav">
+                    <a href="#foto" class="active" data-target="tab-foto">Foto</a>
+                    <a href="#qr" data-target="tab-qr">QR Code</a>
+                    <a href="#pengaturan" data-target="tab-pengaturan">Pengaturan</a>
+                    <a href="#ekspor" data-target="tab-ekspor">Ekspor & Purge</a>
+                    <button id="btn-logout" class="btn-text">Keluar</button>
+                </nav>
+            </header>
+
+            <main class="admin-main">
+                <div class="stats-bar">
+                    <span id="stat-total-photos">0</span> foto | <span id="stat-total-size">0</span> MB terpakai
+                </div>
+
+                <!-- Tab Foto -->
+                <section id="tab-foto" class="tab-content active">
+                    <div class="toolbar">
+                        <button id="btn-select-all" class="btn btn-secondary">Pilih Semua</button>
+                        <span id="selected-count" style="margin-left:1rem;">Dipilih: 0</span>
+                        <div style="flex: 1;"></div>
+                        <button id="btn-delete-selected" class="btn btn-danger" disabled>Hapus Terpilih</button>
+                    </div>
+                    <div id="admin-gallery" class="admin-gallery"></div>
+                </section>
+
+                <!-- Tab QR (Stub) -->
+                <section id="tab-qr" class="tab-content hidden">
+                    <h2>QR Code untuk Tamu</h2>
+                    <p>Cetak QR Code ini agar tamu bisa mengunggah foto.</p>
+                    <div id="qr-container" style="margin: 20px 0; background: #fff; padding: 20px; display:inline-block; border-radius:8px; border:1px solid #ccc;">
+                        (QR Code akan di-generate menggunakan library JS di fase berikutnya)
+                    </div>
+                    <div>
+                        <a href="/" target="_blank" class="btn btn-secondary" style="text-decoration:none; display:inline-block;">Buka Halaman Tamu</a>
+                    </div>
+                </section>
+
+                <!-- Tab Pengaturan (Stub) -->
+                <section id="tab-pengaturan" class="tab-content hidden">
+                    <h2>Pengaturan Acara (TBD)</h2>
+                    <p>Bagian ini dapat dikembangkan di fase selanjutnya sesuai PRD V1/V2.</p>
+                </section>
+
+                <!-- Tab Ekspor (Stub) -->
+                <section id="tab-ekspor" class="tab-content hidden">
+                    <h2>Ekspor & Hapus Data (TBD)</h2>
+                    <p>Logika ekspor ZIP stream dan purging akan dikembangkan di pembaruan selanjutnya.</p>
+                </section>
+            </main>
+        </div>
+    </div>
+    
+    <script src="admin.js"></script>
+</body>
+</html>

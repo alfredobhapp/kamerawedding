@@ -42,6 +42,43 @@ class Router {
             $this->checkGuestAuth();
             $uploader = new Upload($this->db, $this->config);
             $uploader->handle();
+            exit;
+        }
+
+        // ADMIN ROUTES
+        if (strpos($route, 'admin/') === 0) {
+            require_once __DIR__ . '/Auth.php';
+            $auth = new Auth($this->db);
+            
+            if ($method === 'POST' && $route === 'admin/login') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                if ($auth->login($input['username'] ?? '', $input['password'] ?? '')) {
+                    Response::json(['token' => $_SESSION['csrf_token']]);
+                } else {
+                    Response::error('auth_failed', 'Username atau password salah.', 401);
+                }
+            }
+            
+            $auth->check();
+            require_once __DIR__ . '/Admin.php';
+            $admin = new Admin($this->db);
+
+            if ($method === 'GET' && $route === 'admin/photos') {
+                $admin->getPhotos();
+            }
+            
+            if ($method === 'GET' && $route === 'admin/stats') {
+                $admin->getStats();
+            }
+            
+            if ($method === 'POST' && $route === 'admin/photos/bulk') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                if (($input['action'] ?? '') === 'delete') {
+                    $admin->deletePhotos($input['ids'] ?? []);
+                }
+            }
+            
+            Response::error('not_found', 'Admin API endpoint tidak ditemukan.', 404);
         }
 
         Response::error('not_found', 'Endpoint tidak ditemukan.', 404);
