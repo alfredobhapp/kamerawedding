@@ -25,7 +25,7 @@ try {
         echo "<p>Tabel telah dibuat. Silakan login dengan Username: <b>admin</b>, Password: <b>admin123</b></p>";
     }
     
-    echo "<a href='/admin/'>Ke Dashboard Admin</a>";
+    echo "<a href='../admin/'>Ke Dashboard Admin</a>";
 } catch (Exception $e) {
     echo "<h1>Gagal Menginstal</h1>";
     echo "<pre>" . $e->getMessage() . "</pre>";

@@ -117,7 +117,7 @@ const UploadQueue = {
     uploadFile(item, processed) {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/api/photos');
+            xhr.open('POST', 'api/photos');
             xhr.setRequestHeader('X-Requested-With', 'wpr');
             
             xhr.upload.onprogress = (e) => {

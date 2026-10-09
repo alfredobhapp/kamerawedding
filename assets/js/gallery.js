@@ -35,7 +35,7 @@ const Gallery = {
         this.loading = true;
         
         try {
-            const url = this.cursor ? `/api/photos?cursor=${this.cursor}` : '/api/photos';
+            const url = this.cursor ? `api/photos?cursor=${this.cursor}` : 'api/photos';
             const res = await fetch(url);
             const data = await res.json();
             
@@ -95,7 +95,7 @@ const Gallery = {
         this.lbNote.textContent = item.note || '';
         
         this.lbDownload.onclick = async () => {
-            const url = `/api/photos/${item.id}/download`;
+            const url = `api/photos/${item.id}/download`;
             if (navigator.share) {
                 try {
                     const res = await fetch(url);

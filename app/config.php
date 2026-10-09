@@ -1,19 +1,19 @@
 <?php
 return [
     'app' => [
-        'url' => 'https://example.com',
+        'url' => 'https://vincentiusalfredo.com/kamerawedding',
         'timezone' => 'Asia/Jakarta',
-        'secret_key' => 'CHANGE_THIS_TO_A_32_BYTE_RANDOM_STRING_FOR_PRODUCTION',
+        'secret_key' => '2d4d50252937121acded31c0b9685199fafc191b4ef3726af5afe94d39485f1d',
     ],
     'db' => [
-        'driver' => 'sqlite', // 'mysql' atau 'sqlite'
+        'driver' => 'mysql', // ← diubah dari 'sqlite'
         'sqlite_path' => __DIR__ . '/storage/sqlite/wpr.sqlite',
         'mysql' => [
-            'host' => '127.0.0.1',
+            'host' => '127.0.0.1', // atau 'localhost'
             'port' => '3306',
-            'database' => 'wpr_db',
-            'username' => 'root',
-            'password' => '',
+            'database' => 'vinq9912_wpr_db', // ← nama DB cPanel
+            'username' => 'vinq9912_admin',  // ← perhatikan prefix!
+            'password' => '@marsha12345',
             'charset' => 'utf8mb4'
         ]
     ],

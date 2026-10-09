@@ -70,7 +70,7 @@ const Admin = {
         this.errorMsg.textContent = '';
         
         try {
-            const res = await fetch('/api/admin/login', {
+            const res = await fetch('../api/admin/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -98,11 +98,11 @@ const Admin = {
 
     async loadData() {
         try {
-            const stats = await this.request('/api/admin/stats');
+            const stats = await this.request('../api/admin/stats');
             document.getElementById('stat-total-photos').textContent = stats.total_photos;
             document.getElementById('stat-total-size').textContent = stats.total_size_mb;
 
-            const photos = await this.request('/api/admin/photos');
+            const photos = await this.request('../api/admin/photos');
             this.photos = photos.items || [];
             this.selectedIds.clear();
             this.renderGallery();
@@ -120,7 +120,7 @@ const Admin = {
             
             el.innerHTML = `
                 <div class="checkbox-overlay"></div>
-                <img src="${p.thumb}" loading="lazy">
+                <img src="../${p.thumb}" loading="lazy">
                 ${p.note ? `<div class="note-overlay">${p.note}</div>` : ''}
             `;
             this.galleryEl.appendChild(el);
@@ -162,7 +162,7 @@ const Admin = {
         btn.textContent = 'Menghapus...';
         
         try {
-            await this.request('/api/admin/photos/bulk', {
+            await this.request('../api/admin/photos/bulk', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'delete', ids: Array.from(this.selectedIds) })
