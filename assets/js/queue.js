@@ -2,15 +2,47 @@ const UploadQueue = {
     queue: [],
     activeCount: 0,
     maxConcurrent: 2,
+    isUploading: false,
 
     init() {
         this.listEl = document.getElementById('upload-list');
         this.sheetEl = document.getElementById('upload-sheet');
         this.countEl = document.getElementById('upload-count');
+        this.submitBtn = document.getElementById('btn-submit-upload');
         
         document.getElementById('btn-close-sheet').addEventListener('click', () => {
             this.sheetEl.classList.add('hidden');
         });
+
+        if (this.submitBtn) {
+            this.submitBtn.addEventListener('click', () => {
+                this.startPosting();
+            });
+        }
+
+        // Privacy Modal Handler
+        const privacyModal = document.getElementById('privacy-modal');
+        const btnPrivacy = document.getElementById('btn-privacy');
+        const btnClosePrivacy = document.getElementById('btn-close-privacy');
+        const btnAckPrivacy = document.getElementById('btn-ack-privacy');
+
+        if (btnPrivacy && privacyModal) {
+            btnPrivacy.addEventListener('click', () => {
+                privacyModal.classList.remove('hidden');
+            });
+        }
+
+        if (btnClosePrivacy && privacyModal) {
+            btnClosePrivacy.addEventListener('click', () => {
+                privacyModal.classList.add('hidden');
+            });
+        }
+
+        if (btnAckPrivacy && privacyModal) {
+            btnAckPrivacy.addEventListener('click', () => {
+                privacyModal.classList.add('hidden');
+            });
+        }
     },
 
     addFiles(files) {
@@ -24,7 +56,7 @@ const UploadQueue = {
                 file: file,
                 previewUrl: URL.createObjectURL(file),
                 note: '',
-                status: 'pending',
+                status: 'draft', // User bisa mengisi note dengan santai
                 progress: 0,
                 retries: 0
             };
@@ -33,7 +65,27 @@ const UploadQueue = {
         }
         
         this.updateTotal();
-        this.processQueue();
+    },
+
+    startPosting() {
+        // Ubah semua item yang masih draft menjadi pending
+        let hasDraft = false;
+        this.queue.forEach(item => {
+            if (item.status === 'draft') {
+                item.status = 'pending';
+                hasDraft = true;
+                this.renderItem(item);
+            }
+        });
+
+        if (hasDraft || this.queue.some(q => q.status === 'pending')) {
+            if (this.submitBtn) {
+                this.submitBtn.disabled = true;
+                this.submitBtn.textContent = 'Sedang Memposting...';
+            }
+            this.isUploading = true;
+            this.processQueue();
+        }
     },
 
     updateTotal() {
@@ -50,9 +102,10 @@ const UploadQueue = {
         }
         
         let statusText = '';
-        if (item.status === 'pending') statusText = 'Menunggu...';
+        if (item.status === 'draft') statusText = 'Siap diposting';
+        else if (item.status === 'pending') statusText = 'Menunggu antrean...';
         else if (item.status === 'processing') statusText = 'Memproses...';
-        else if (item.status === 'uploading') statusText = `${item.progress}%`;
+        else if (item.status === 'uploading') statusText = `Mengunggah ${item.progress}%`;
         else if (item.status === 'success') statusText = 'Terunggah ✓';
         else if (item.status === 'error') statusText = 'Gagal';
 
@@ -118,8 +171,15 @@ const UploadQueue = {
 
         const next = this.queue.find(q => q.status === 'pending');
         if (!next) {
-            const pending = this.queue.filter(q => q.status !== 'success' && q.status !== 'error').length;
-            if (pending === 0) window.onbeforeunload = null;
+            const pending = this.queue.filter(q => q.status !== 'success' && q.status !== 'error' && q.status !== 'draft').length;
+            if (pending === 0) {
+                window.onbeforeunload = null;
+                this.isUploading = false;
+                if (this.submitBtn) {
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.textContent = 'Posting Foto ke Galeri';
+                }
+            }
             return;
         }
 

@@ -63,17 +63,44 @@ if ($token) {
         </footer>
     </main>
 
-    <!-- Upload Progress Bottom Sheet -->
+    <!-- Upload Bottom Sheet -->
     <div id="upload-sheet" class="upload-sheet hidden">
         <div class="upload-sheet-content">
             <div class="sheet-header">
-                <h3>Mengunggah <span id="upload-count">0</span> foto</h3>
+                <h3>Foto Terpilih (<span id="upload-count">0</span>)</h3>
                 <button id="btn-close-sheet" class="btn-icon">&times;</button>
             </div>
+
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+                Tulis ucapan/pesan untuk pengantin di masing-masing foto sebelum memposting ke galeri bersama.
+            </p>
 
             <div class="upload-list" id="upload-list" aria-live="polite">
                 <!-- Baris preview & catatan per-foto akan masuk ke sini -->
             </div>
+
+            <div style="margin-top: 1.25rem; display: flex; gap: 10px;">
+                <button id="btn-submit-upload" class="btn btn-primary" style="flex: 1;">
+                    Posting Foto ke Galeri
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Informasi Privasi -->
+    <div id="privacy-modal" class="lightbox hidden" style="background: rgba(0,0,0,0.65); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="background: #fff; max-width: 440px; margin: 1.5rem; padding: 1.75rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: #1B4D3E; font-size: 1.15rem;">Pemberitahuan Penting</h3>
+                <button id="btn-close-privacy" class="btn-icon" style="font-size: 1.5rem; cursor: pointer; border: none; background: none;">&times;</button>
+            </div>
+            <p style="font-size: 0.95rem; line-height: 1.6; color: #333; margin-bottom: 1rem;">
+                Semua foto bisa dilihat oleh seluruh undangan, mohon berhati - hati dalam foto / upload.
+            </p>
+            <p style="font-size: 0.95rem; line-height: 1.6; color: #A3262F; font-weight: 600; margin-bottom: 1.5rem;">
+                Segala bentuk data yang terupload bisa ditrace IPnya dan akan diperkarakan jika ketahuan.
+            </p>
+            <button id="btn-ack-privacy" class="btn btn-primary" style="width: 100%;">Saya Mengerti</button>
         </div>
     </div>
 
