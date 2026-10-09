@@ -20,7 +20,8 @@ if ($token) {
     <div class="sunflower-bg"></div>
     <div class="sunflower-bg bottom-left"></div>
     
-    <main class="home-container">
+    <!-- TAMPILAN BERANDA -->
+    <main class="home-container" id="home-view">
         <header class="home-header">
             <h1>Pernikahan Rina & Bima</h1>
             <p class="date">Sabtu, 17 Oktober 2026</p>
@@ -74,8 +75,33 @@ if ($token) {
         </div>
     </div>
 
+    <!-- TAMPILAN GALERI -->
+    <div id="gallery-view" style="display: none;">
+        <header class="gallery-header">
+            <a href="#" class="btn-back">&larr; Kembali</a>
+            <h2>Galeri Foto</h2>
+        </header>
+        <div id="gallery-grid" class="gallery-grid"></div>
+        <div id="gallery-sentinel" class="gallery-sentinel">Memuat lebih banyak...</div>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div id="lightbox" class="lightbox hidden">
+        <div class="lb-header">
+            <button id="lb-close" class="btn-icon">&times;</button>
+        </div>
+        <div class="lb-content">
+            <img id="lb-img" src="" alt="Full foto">
+        </div>
+        <div class="lb-footer">
+            <p id="lb-note" class="lb-note"></p>
+            <button id="lb-download" class="btn btn-primary">Unduh Foto</button>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="/assets/js/pipeline.js"></script>
     <script src="/assets/js/queue.js"></script>
+    <script src="/assets/js/gallery.js"></script>
 </body>
 </html>

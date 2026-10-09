@@ -26,6 +26,18 @@ class Router {
             ]);
         }
 
+        if ($method === 'GET' && $route === 'photos') {
+            require_once __DIR__ . '/Gallery.php';
+            $gallery = new Gallery($this->db, $this->config);
+            $gallery->getPhotos();
+        }
+
+        if ($method === 'GET' && preg_match('/^photos\/(\d+)\/download$/', $route, $matches)) {
+            require_once __DIR__ . '/Gallery.php';
+            $gallery = new Gallery($this->db, $this->config);
+            $gallery->downloadPhoto($matches[1]);
+        }
+
         if ($method === 'POST' && $route === 'photos') {
             $this->checkGuestAuth();
             $uploader = new Upload($this->db, $this->config);
