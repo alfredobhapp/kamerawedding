@@ -77,11 +77,29 @@ const UploadQueue = {
         const textarea = el.querySelector('.upload-item-note');
         textarea.oninput = (e) => {
             item.note = e.target.value;
+            // Jika foto sudah terunggah ke server, perbarui catatan secara asinkron
+            if (item.photoId) {
+                this.syncNoteDebounced(item);
+            }
         };
-        // Disable note editing once successfully uploaded
-        if (item.status === 'success') {
-            textarea.disabled = true;
-        }
+    },
+
+    syncNoteDebounced(item) {
+        clearTimeout(item.syncTimer);
+        item.syncTimer = setTimeout(async () => {
+            try {
+                await fetch(`api/photos/${item.photoId}/note`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'wpr'
+                    },
+                    body: JSON.stringify({ note: item.note })
+                });
+            } catch (err) {
+                console.error('Gagal sinkronisasi catatan', err);
+            }
+        }, 600);
     },
 
     retry(id) {
@@ -114,9 +132,15 @@ const UploadQueue = {
             const processed = await Pipeline.process(next.file);
             next.status = 'uploading';
             this.renderItem(next);
-            await this.uploadFile(next, processed);
+            const res = await this.uploadFile(next, processed);
+            next.photoId = res.id;
             next.status = 'success';
             next.progress = 100;
+
+            // Jika user sempat mengetik note saat proses upload sedang berlangsung, sinkronkan note terbaru
+            if (next.note) {
+                this.syncNoteDebounced(next);
+            }
         } catch (err) {
             console.error(err);
             next.status = 'error';

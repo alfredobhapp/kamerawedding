@@ -41,6 +41,17 @@ class Router {
             $gallery->downloadPhoto($matches[1]);
         }
 
+        if ($method === 'POST' && preg_match('/^photos\/(\d+)\/note$/', $route, $matches)) {
+            $this->checkGuestAuth();
+            $photoId = $matches[1];
+            $input = json_decode(file_get_contents('php://input'), true);
+            $note = isset($input['note']) ? trim($input['note']) : '';
+            
+            $stmt = $this->db->prepare("UPDATE photos SET guest_note = ? WHERE id = ?");
+            $stmt->execute([$note ?: null, $photoId]);
+            Response::json(['success' => true]);
+        }
+
         if ($method === 'POST' && $route === 'photos') {
             $this->checkGuestAuth();
             $uploader = new Upload($this->db, $this->config);
